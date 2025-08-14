@@ -1,0 +1,44 @@
+- name: app setup
+  include_role:
+    name: common
+    tasks_from: app-setup
+
+- name: maven setup
+  include_role:
+    name: common
+    tasks_from: maven
+
+- name: copy shipping service
+  ansible.builtin.copy:
+    src: shipping.service
+    dest: /etc/systemd/system/shipping.service
+
+- name: Daemon Reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Start and Enable shipping service
+  ansible.builtin.service:
+    name: shipping
+    state: started
+    enabled: yes
+
+- name: Load the data into database
+  tags:
+  - import
+  community.mysql.mysql_db:
+    login_user: "{{ MYSQL_ROOT_USER }}"
+    login_password: "{{ MYSQL_ROOT_PASSWORD }}"
+    name: all
+    login_host: "{{ MYSQL_HOST }}"
+    state: import
+    target: "{{ item }}"
+  loop:
+  - /app/db/schema.sql
+  - /app/db/app-user.sql 
+  - /app/db/master-data.sql
+  
+- name: Restart shipping
+  ansible.builtin.service:
+    name: shipping
+    state: restarted

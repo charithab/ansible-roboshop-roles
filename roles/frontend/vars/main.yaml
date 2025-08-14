@@ -1,0 +1,5 @@
+CATALOGUE_HOST: catalogue.charitha.site
+USER_HOST: user.charitha.site
+CART_HOST: cart.charitha.site
+SHIPPING_HOST: shipping.charitha.site
+PAYMENT_HOST: payment.charitha.site
