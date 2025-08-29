@@ -21,17 +21,27 @@
 - name: check products loaded or not 
   ansible.builtin.command: mongosh --host mongodb.charitha.site --eval 'db.getMongo().getDBNames().indexOf("catalogue")'
   register: catalogue_output
+  ignore_errors: true
 
 - name: print catalogue output
   ansible.builtin.debug:
     msg: "{{ catalogue_output }}"
+  ignore_errors: true
 
 - name: check products loaded or not 
   ansible.builtin.shell: mongosh --host mongodb.charitha.site < /app/db/master-data.js
   when: catalogue_output.stdout | int < 0
+  ignore_errors: true
 
 - name: systemd
   include_role:
     name: common
     tasks_from: systemd
+
+- name: Deployment
+  tags:
+  - deployment
+  include_role:
+    name: common
+    tasks_from: deployment
 

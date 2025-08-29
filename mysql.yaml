@@ -1,0 +1,15 @@
+- name: "Configure {{ component }}"
+  become: yes
+  hosts: "{{ component }}"
+  vars_files:
+  - vault/mysql.yaml
+  roles: # This will automatically load a folder called roles in current working directory.
+  - "{{ component }}"
+  tasks: 
+  - name: install boto3 and botocore
+    ansible.builtin.pip:
+      name: "{{ item }}"
+      executable: pip3.9
+    loop:
+    - boto3
+    - botocore
